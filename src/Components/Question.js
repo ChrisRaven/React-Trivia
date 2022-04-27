@@ -4,6 +4,7 @@ import React, {useState, useEffect} from "react";
 export default function Question({question, correctAnswer, incorrectAnswers, handleSelectAnswer, id}) {
   const [answers, setAnswers] = useState([])
 
+
   useEffect(() => {
     let a = [correctAnswer, ...incorrectAnswers].sort()
 
@@ -15,6 +16,7 @@ export default function Question({question, correctAnswer, incorrectAnswers, han
       onClick={event => handleSelectAnswer(event, el, correctAnswer, index)}
     >{el}</span>))
   }, [question]) // eslint-disable-line react-hooks/exhaustive-deps
+  
   
   return (
     <div id={id}>

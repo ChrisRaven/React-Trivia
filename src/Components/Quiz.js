@@ -7,7 +7,6 @@ export default function Quiz() {
   const [selectedAnswers, setSelectedAnswers] = useState({})
 
 
-
   useEffect(() => {
     fetch('https://opentdb.com/api.php?amount=5&category=9&difficulty=medium&type=multiple&encode=url3986')
       .then(response => response.json())
@@ -71,22 +70,21 @@ export default function Quiz() {
 
 
   function selectAnswer(event, selectedOption, correctAnswer, optionId) {
+    const target = event.target;
+
     setSelectedAnswers(oldAnswers => ({
       ...oldAnswers,
-      [event.target.parentNode.parentNode.id]: {
+      [target.parentNode.parentNode.id]: {
         selectedOption: selectedOption,
         correctAnswer: correctAnswer,
         optionId: optionId
       }
     }))
-    event.target.parentNode.childNodes.forEach(el => el.classList.remove('selected'))
-    event.target.classList.add('selected')
-    
+
+    target.parentNode.childNodes.forEach(el => el.classList.remove('selected'))
+    target.classList.add('selected')
   }
 
-  useEffect(() => {
-    console.log(selectedAnswers)
-  }, [selectedAnswers])
 
   return (
     <>

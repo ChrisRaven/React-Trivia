@@ -15,6 +15,7 @@ export default function App() {
     blob2.style.left = '-400px'
   }
 
+  
   function clickStart() {
     repositionBlobs()
     setInGame(true)
