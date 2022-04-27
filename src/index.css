@@ -10,7 +10,7 @@ main {
   transform: translate(-50%, -50%);
   background-color: #F5F7FB;
   width: 550px;
-  height: 550px;
+  height: 600px;
   overflow: hidden;
 }
 
@@ -72,6 +72,7 @@ main {
   font-size: 16px;
   font-weight: 500;
   font-style: normal;
+  cursor: pointer;
 }
 
 .quiz {
@@ -103,12 +104,29 @@ main {
   line-height: 12px;
   text-align: center;
   color: #293264;
-  padding: 3px 10px;
+  padding: 4px 10px;
   margin: 2px 10px;
+  cursor: pointer;
 }
 
 .selected {
   background-color: #D6DBF5;
+}
+
+.correct {
+  background-color: #94D7A2;
+  border: none;
+}
+
+.incorrect {
+  background-color: #F8BCBC;
+  border: none;
+  opacity: 0.5;
+}
+
+.other {
+  border-color: #4D5B9E;
+  opacity: 0.5;
 }
 
 hr {
@@ -118,6 +136,7 @@ hr {
 }
 
 .check-answers-button {
+  border: none;
   border-radius: 15px;
   background: #4D5B9E;
   padding: 10px;
@@ -134,4 +153,5 @@ hr {
   transform: translateX(-50%);
   left: 50%;
   position: relative;
+  cursor: pointer;
 }
