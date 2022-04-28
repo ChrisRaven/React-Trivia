@@ -7,10 +7,12 @@ export default function Quiz() {
   const [selectedAnswers, setSelectedAnswers] = useState({})
   const [answered, setAnswered] = useState(false)
   const [summary, setSummary] = useState('')
+  const [reset, setReset] = useState(true)
 
 
 
   useEffect(() => {
+    if (reset) {
     fetch('https://opentdb.com/api.php?amount=5&category=9&difficulty=medium&type=multiple&encode=url3986')
       .then(response => response.json())
       .then(data => {
@@ -22,7 +24,10 @@ export default function Quiz() {
 
         setQuestions(results)
       })
-  }, [])
+
+      setReset(false)
+    }
+  }, [reset])
 
   useEffect(() => {
     if (questions.length) {
@@ -91,7 +96,26 @@ export default function Quiz() {
 
 
   function playAgain() {
+    const classes = ['correct', 'incorrect', 'other', 'selected']
+    document.querySelectorAll('.answer').forEach(answer => answer.classList.remove(...classes))
 
+    // alternatives with getElementsByClassName():
+
+    /*
+    Array.prototype.forEach.call(
+      document.getElementsByClassName('answer'),
+      answer => answer.classList.remove(...classes)
+    );
+    */
+
+    /*
+    [...document.getElementsByClassName('answer')].forEach(answer => answer.classList.remove(...classes))
+    */
+
+    setReset(true)
+    setAnswered(false)
+    setSelectedAnswers({})
+    setSummary('')
   }
 
 
@@ -119,4 +143,4 @@ export default function Quiz() {
 // TODO:
 // add Play again button functionality
 // prevent from selecting answers after checking them
-// prevent from selecting text in answers
+// change style for all questions. Not only the answered ones
