@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import Question from './Question'
+
 
 export default function Quiz() {
   const [questions, setQuestions] = useState([])
@@ -8,11 +9,17 @@ export default function Quiz() {
   const [answered, setAnswered] = useState(false)
   const [summary, setSummary] = useState('')
   const [reset, setReset] = useState(true)
+  const answeredRef = useRef() // source: https://stackoverflow.com/a/60643670
 
+  useEffect(() => {
+    answeredRef.current = answered
+  }, [answered])
+  
 
 
   useEffect(() => {
-    if (reset) {
+    if (!reset) return
+
     fetch('https://opentdb.com/api.php?amount=5&category=9&difficulty=medium&type=multiple&encode=url3986')
       .then(response => response.json())
       .then(data => {
@@ -26,22 +33,24 @@ export default function Quiz() {
       })
 
       setReset(false)
-    }
+
   }, [reset])
 
-  useEffect(() => {
-    if (questions.length) {
-      const rows = questions.map((q, index) => <Question
-        questionId={`question-${index}`}
-        key={index}
-        question={q.question}
-        correctAnswerText={q.correctAnswerText}
-        incorrectAnswersText={q.incorrectAnswersText}
-        handleSelectAnswer={selectAnswer}
-      />)
 
-      setRows(rows)
-    }
+  useEffect(() => {
+    if (!questions.length) return
+
+    const rows = questions.map((q, index) => <Question
+      questionId={`question-${index}`}
+      key={index}
+      question={q.question}
+      correctAnswerText={q.correctAnswerText}
+      incorrectAnswersText={q.incorrectAnswersText}
+      handleSelectAnswer={selectAnswer}
+    />)
+
+    setRows(rows)
+
   }, [questions]) // eslint-disable-line react-hooks/exhaustive-deps
 
 
@@ -68,6 +77,13 @@ export default function Quiz() {
       }
     }
 
+    document.querySelectorAll('.answer').forEach(answer => {
+      const list = answer.classList
+      if (!list.contains('correct') && !list.contains('incorrect')) {
+        list.add('other')
+      }
+    })
+
     setAnswered(true)
     summarize(numberOfQuestions, numberOfCorrectAnswers)
   }
@@ -79,6 +95,8 @@ export default function Quiz() {
 
 
   function selectAnswer(event, selectedOptionText, correctAnswerText, selectedOptionId) {
+    if (answeredRef.current) return
+
     const target = event.target;
 
     setSelectedAnswers(oldAnswers => ({
@@ -98,19 +116,6 @@ export default function Quiz() {
   function playAgain() {
     const classes = ['correct', 'incorrect', 'other', 'selected']
     document.querySelectorAll('.answer').forEach(answer => answer.classList.remove(...classes))
-
-    // alternatives with getElementsByClassName():
-
-    /*
-    Array.prototype.forEach.call(
-      document.getElementsByClassName('answer'),
-      answer => answer.classList.remove(...classes)
-    );
-    */
-
-    /*
-    [...document.getElementsByClassName('answer')].forEach(answer => answer.classList.remove(...classes))
-    */
 
     setReset(true)
     setAnswered(false)
@@ -141,6 +146,4 @@ export default function Quiz() {
 }
 
 // TODO:
-// add Play again button functionality
-// prevent from selecting answers after checking them
-// change style for all questions. Not only the answered ones
+// mark incorrect answers also where nothing was selected
