@@ -123,6 +123,7 @@ export default function Quiz() {
 
     setReset(true)
     setAnswered(false)
+    setRows([])
     setSelectedAnswers({})
     setSummary('')
   }
@@ -148,6 +149,3 @@ export default function Quiz() {
     </>
   )
 }
-
-// TODO:
-// prevent from flashing old questions, when the Play again button was pressed
