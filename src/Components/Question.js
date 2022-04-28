@@ -1,25 +1,25 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect} from 'react';
 
 
-export default function Question({question, correctAnswer, incorrectAnswers, handleSelectAnswer, id}) {
+export default function Question({question, correctAnswerText, incorrectAnswersText, handleSelectAnswer, questionId}) {
   const [answers, setAnswers] = useState([])
 
 
   useEffect(() => {
-    let a = [correctAnswer, ...incorrectAnswers].sort()
+    let a = [correctAnswerText, ...incorrectAnswersText].sort()
 
-    setAnswers(a.map((el, index) => <span
-      key={index}
+    setAnswers(a.map((optionText, optionId) => <span
+      key={optionId}
       className='answer'
-      optionid={index}
-      optiontext={el}
-      onClick={event => handleSelectAnswer(event, el, correctAnswer, index)}
-    >{el}</span>))
+      optionid={optionId}
+      optiontext={optionText}
+      onClick={event => handleSelectAnswer(event, optionText, correctAnswerText, optionId)}
+    >{optionText}</span>))
   }, [question]) // eslint-disable-line react-hooks/exhaustive-deps
   
   
   return (
-    <div id={id}>
+    <div id={questionId}>
       <div className="question">{question}</div>
       <div>{answers}</div>
       <hr />

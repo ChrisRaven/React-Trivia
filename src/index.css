@@ -135,6 +135,7 @@ hr {
   margin: 5px auto;
 }
 
+.play-again-button,
 .check-answers-button {
   border: none;
   border-radius: 15px;
@@ -154,4 +155,22 @@ hr {
   left: 50%;
   position: relative;
   cursor: pointer;
+}
+
+.play-again-button {
+  left: 0;
+  transform: none;
+}
+
+.results {
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.summary {
+  font-family: 'Inter';
+  font-weight: 700;
+  font-size: 13px;
+  color: #293264;
 }

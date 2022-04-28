@@ -1,10 +1,13 @@
-import React, {useState, useEffect} from "react"
+import React, {useState, useEffect} from 'react'
 import Question from './Question'
 
 export default function Quiz() {
   const [questions, setQuestions] = useState([])
   const [rows, setRows] = useState([])
   const [selectedAnswers, setSelectedAnswers] = useState({})
+  const [answered, setAnswered] = useState(false)
+  const [summary, setSummary] = useState('')
+
 
 
   useEffect(() => {
@@ -12,8 +15,8 @@ export default function Quiz() {
       .then(response => response.json())
       .then(data => {
         const results = data.results.map(result => ({
-          correctAnswer: decodeURIComponent(result.correct_answer),
-          incorrectAnswers: result.incorrect_answers.map(answer => decodeURIComponent(answer)),
+          correctAnswerText: decodeURIComponent(result.correct_answer),
+          incorrectAnswersText: result.incorrect_answers.map(answer => decodeURIComponent(answer)),
           question: decodeURIComponent(result.question)
         }))
 
@@ -24,11 +27,11 @@ export default function Quiz() {
   useEffect(() => {
     if (questions.length) {
       const rows = questions.map((q, index) => <Question
-        id={`question-${index}`}
+        questionId={`question-${index}`}
         key={index}
         question={q.question}
-        correctAnswer={q.correctAnswer}
-        incorrectAnswers={q.incorrectAnswers}
+        correctAnswerText={q.correctAnswerText}
+        incorrectAnswersText={q.incorrectAnswersText}
         handleSelectAnswer={selectAnswer}
       />)
 
@@ -38,46 +41,47 @@ export default function Quiz() {
 
 
   function checkAnswers() {
+    const numberOfQuestions = questions.length
+    let numberOfCorrectAnswers = 0;
+
     for (let [questionId, answer] of Object.entries(selectedAnswers)) {
       let options = document.getElementById(questionId).querySelectorAll('.answer')
 
-      options.forEach(option => {
+      // not options.forEach() because of "Function declared in a loop contains unsafe references to variable(s) 'numberOfCorrectAnswers'"
+      for (let option of options) {
         const optionId = parseInt(option.getAttribute('optionid'), 10)
         const optionText = option.getAttribute('optionText')
-        const selectedOptionId = answer.optionId
-        const correctAnswer = answer.correctAnswer
+        const correct = optionText === answer.correctAnswerText
 
-        if (optionId === selectedOptionId) {// sprawdzamy opcję wybraną przez użytkownika
-          if (optionText === correctAnswer) {
-            option.classList.add('correct')
-            return
-          }
-
-          option.classList.add('incorrect')
-          return
+        if (optionId === answer.selectedOptionId) {
+          option.classList.add(correct ? 'correct' : 'incorrect')
+          correct && numberOfCorrectAnswers++
         }
-
-        if (optionText === correctAnswer) {
-          option.classList.add('correct')
-          return
+        else {
+          option.classList.add(correct ? 'correct' : 'other')
         }
-
-        option.classList.add('other')
-        return
-      })
+      }
     }
+
+    setAnswered(true)
+    summarize(numberOfQuestions, numberOfCorrectAnswers)
   }
 
 
-  function selectAnswer(event, selectedOption, correctAnswer, optionId) {
+  function summarize(numberOfQuestions, numberOfCorrectAnswers) {
+    setSummary(`You scored ${numberOfCorrectAnswers} / ${numberOfQuestions} correct answers`)
+  }
+
+
+  function selectAnswer(event, selectedOptionText, correctAnswerText, selectedOptionId) {
     const target = event.target;
 
     setSelectedAnswers(oldAnswers => ({
       ...oldAnswers,
       [target.parentNode.parentNode.id]: {
-        selectedOption: selectedOption,
-        correctAnswer: correctAnswer,
-        optionId: optionId
+        selectedOptionText,
+        correctAnswerText,
+        selectedOptionId
       }
     }))
 
@@ -86,18 +90,33 @@ export default function Quiz() {
   }
 
 
+  function playAgain() {
+
+  }
+
+
+  const answerButton = <button
+      className="check-answers-button"
+      onClick={checkAnswers}
+    >
+      Check answers
+    </button>
+
+  const results = <div className="results">
+    <div className="summary">{summary}</div>
+    <button className="play-again-button" onClick={playAgain}>Play again</button>
+  </div>
+
   return (
     <>
       <div className="quiz">{rows}</div>
-      <button
-        className="check-answers-button"
-        onClick={checkAnswers}
-      >
-        Check answers
-      </button>
+      {!answered && answerButton}
+      {answered && results}
     </>
   )
 }
 
 // TODO:
-// add results and Play again button
+// add Play again button functionality
+// prevent from selecting answers after checking them
+// prevent from selecting text in answers
