@@ -11,8 +11,8 @@ export default function Question({question, correctAnswerText, incorrectAnswersT
     setAnswers(a.map((optionText, optionId) => <span
       key={optionId}
       className='answer'
-      optionid={optionId}
-      optiontext={optionText}
+      data-option-id={optionId}
+      data-option-text={optionText}
       onClick={event => handleSelectAnswer(event, optionText, correctAnswerText, optionId)}
     >{optionText}</span>))
   }, [question]) // eslint-disable-line react-hooks/exhaustive-deps

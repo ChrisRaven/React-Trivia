@@ -49,8 +49,8 @@ export default function Quiz() {
 
       // not options.forEach() because of "Function declared in a loop contains unsafe references to variable(s) 'numberOfCorrectAnswers'"
       for (let option of options) {
-        const optionId = parseInt(option.getAttribute('optionid'), 10)
-        const optionText = option.getAttribute('optionText')
+        const optionId = parseInt(option.dataset.optionId, 10)
+        const optionText = option.dataset.optionText
         const correct = optionText === answer.correctAnswerText
 
         if (optionId === answer.selectedOptionId) {
