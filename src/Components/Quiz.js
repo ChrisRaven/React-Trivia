@@ -58,6 +58,10 @@ export default function Quiz() {
     const numberOfQuestions = questions.length
     let numberOfCorrectAnswers = 0;
 
+    if (numberOfQuestions > Object.entries(selectedAnswers).length) {
+      return alert('Answer all questions')
+    }
+
     for (let [questionId, answer] of Object.entries(selectedAnswers)) {
       let options = document.getElementById(questionId).querySelectorAll('.answer')
 
@@ -146,4 +150,4 @@ export default function Quiz() {
 }
 
 // TODO:
-// mark incorrect answers also where nothing was selected
+// prevent from flashing old questions, when the Play again button was pressed
